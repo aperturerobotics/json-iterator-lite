@@ -6,13 +6,13 @@
     "group:all",
     "workarounds:all"
   ],
+  "forkProcessing": "enabled",
   "branchConcurrentLimit": 0,
-  "packageRules": [{
-    "matchManagers": ["gomod"],
-    "matchDepTypes": ["replace"],
-    "enabled": false
-  }, {
-    "matchPackageNames": ["github.com/libp2p/go-libp2p"],
-    "allowedVersions": ["^v0.*"]
-  }]
+  "packageRules": [
+    {
+      "matchManagers": ["gomod"],
+      "matchDepTypes": ["replace"],
+      "enabled": false
+    }
+  ]
 }
