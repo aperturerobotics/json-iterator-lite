@@ -1,6 +1,6 @@
 module github.com/aperturerobotics/json-iterator-lite
 
-go 1.22
+go 1.21
 
 require (
 	github.com/json-iterator/go v1.1.12

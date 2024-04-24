@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"testing"
 
-	jsoniter "github.com/json-iterator/go"
+	jsoniter "github.com/aperturerobotics/json-iterator-lite"
 )
 
 func Benchmark_stream_encode_big_object(b *testing.B) {
