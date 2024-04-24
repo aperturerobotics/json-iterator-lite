@@ -7,9 +7,9 @@ import (
 // stream is a io.Writer like object, with JSON specific write functions.
 // Error is not returned as return value, but stored as Error member on this stream instance.
 type Stream struct {
-	cfg        *frozenConfig
 	out        io.Writer
 	buf        []byte
+	indentStep int
 	Error      error
 	indention  int
 	Attachment interface{} // open for customized encoder
@@ -19,19 +19,14 @@ type Stream struct {
 // cfg can be jsoniter.ConfigDefault.
 // out can be nil if write to internal buffer.
 // bufSize is the initial size for the internal buffer in bytes.
-func NewStream(cfg API, out io.Writer, bufSize int) *Stream {
+func NewStream(out io.Writer, bufSize, indentStep int) *Stream {
 	return &Stream{
-		cfg:       cfg.(*frozenConfig),
-		out:       out,
-		buf:       make([]byte, 0, bufSize),
-		Error:     nil,
-		indention: 0,
+		out:        out,
+		buf:        make([]byte, 0, bufSize),
+		Error:      nil,
+		indention:  0,
+		indentStep: indentStep,
 	}
-}
-
-// Pool returns a pool can provide more stream with same configuration
-func (stream *Stream) Pool() StreamPool {
-	return stream.cfg
 }
 
 // Reset reuse this stream instance by assign a new writer
@@ -145,7 +140,7 @@ func (stream *Stream) WriteBool(val bool) {
 
 // WriteObjectStart write { with possible indention
 func (stream *Stream) WriteObjectStart() {
-	stream.indention += stream.cfg.indentionStep
+	stream.indention += stream.indentStep
 	stream.writeByte('{')
 	stream.writeIndention(0)
 }
@@ -162,8 +157,8 @@ func (stream *Stream) WriteObjectField(field string) {
 
 // WriteObjectEnd write } with possible indention
 func (stream *Stream) WriteObjectEnd() {
-	stream.writeIndention(stream.cfg.indentionStep)
-	stream.indention -= stream.cfg.indentionStep
+	stream.writeIndention(stream.indentStep)
+	stream.indention -= stream.indentStep
 	stream.writeByte('}')
 }
 
@@ -181,7 +176,7 @@ func (stream *Stream) WriteMore() {
 
 // WriteArrayStart write [ with possible indention
 func (stream *Stream) WriteArrayStart() {
-	stream.indention += stream.cfg.indentionStep
+	stream.indention += stream.indentStep
 	stream.writeByte('[')
 	stream.writeIndention(0)
 }
@@ -193,8 +188,8 @@ func (stream *Stream) WriteEmptyArray() {
 
 // WriteArrayEnd write ] with possible indention
 func (stream *Stream) WriteArrayEnd() {
-	stream.writeIndention(stream.cfg.indentionStep)
-	stream.indention -= stream.cfg.indentionStep
+	stream.writeIndention(stream.indentStep)
+	stream.indention -= stream.indentStep
 	stream.writeByte(']')
 }
 

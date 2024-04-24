@@ -1,7 +1,6 @@
 package jsoniter
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 )
@@ -69,7 +68,6 @@ func init() {
 // Iterator is a io.Reader like object, with JSON specific read functions.
 // Error is not returned as return value, but stored as Error member on this iterator instance.
 type Iterator struct {
-	cfg              *frozenConfig
 	reader           io.Reader
 	buf              []byte
 	head             int
@@ -82,9 +80,8 @@ type Iterator struct {
 }
 
 // NewIterator creates an empty Iterator instance
-func NewIterator(cfg API) *Iterator {
+func NewIterator() *Iterator {
 	return &Iterator{
-		cfg:    cfg.(*frozenConfig),
 		reader: nil,
 		buf:    nil,
 		head:   0,
@@ -94,9 +91,8 @@ func NewIterator(cfg API) *Iterator {
 }
 
 // Parse creates an Iterator instance from io.Reader
-func Parse(cfg API, reader io.Reader, bufSize int) *Iterator {
+func Parse(reader io.Reader, bufSize int) *Iterator {
 	return &Iterator{
-		cfg:    cfg.(*frozenConfig),
 		reader: reader,
 		buf:    make([]byte, bufSize),
 		head:   0,
@@ -106,9 +102,8 @@ func Parse(cfg API, reader io.Reader, bufSize int) *Iterator {
 }
 
 // ParseBytes creates an Iterator instance from byte array
-func ParseBytes(cfg API, input []byte) *Iterator {
+func ParseBytes(input []byte) *Iterator {
 	return &Iterator{
-		cfg:    cfg.(*frozenConfig),
 		reader: nil,
 		buf:    input,
 		head:   0,
@@ -118,13 +113,8 @@ func ParseBytes(cfg API, input []byte) *Iterator {
 }
 
 // ParseString creates an Iterator instance from string
-func ParseString(cfg API, input string) *Iterator {
-	return ParseBytes(cfg, []byte(input))
-}
-
-// Pool returns a pool can provide more iterator with same configuration
-func (iter *Iterator) Pool() IteratorPool {
-	return iter.cfg
+func ParseString(input string) *Iterator {
+	return ParseBytes([]byte(input))
 }
 
 // Reset reuse iterator instance by specifying another reader
@@ -285,46 +275,6 @@ func (iter *Iterator) unreadByte() {
 	}
 	iter.head--
 	return
-}
-
-// Read read the next JSON element as generic interface{}.
-func (iter *Iterator) Read() interface{} {
-	valueType := iter.WhatIsNext()
-	switch valueType {
-	case StringValue:
-		return iter.ReadString()
-	case NumberValue:
-		if iter.cfg.configBeforeFrozen.UseNumber {
-			return json.Number(iter.readNumberAsString())
-		}
-		return iter.ReadFloat64()
-	case NilValue:
-		iter.skipFourBytes('n', 'u', 'l', 'l')
-		return nil
-	case BoolValue:
-		return iter.ReadBool()
-	case ArrayValue:
-		arr := []interface{}{}
-		iter.ReadArrayCB(func(iter *Iterator) bool {
-			var elem interface{}
-			iter.ReadVal(&elem)
-			arr = append(arr, elem)
-			return true
-		})
-		return arr
-	case ObjectValue:
-		obj := map[string]interface{}{}
-		iter.ReadMapCB(func(Iter *Iterator, field string) bool {
-			var elem interface{}
-			iter.ReadVal(&elem)
-			obj[field] = elem
-			return true
-		})
-		return obj
-	default:
-		iter.ReportError("Read", fmt.Sprintf("unexpected value type: %v", valueType))
-		return nil
-	}
 }
 
 // limit maximum depth of nesting, as allowed by https://tools.ietf.org/html/rfc7159#section-9

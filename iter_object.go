@@ -60,9 +60,6 @@ func (iter *Iterator) readFieldHash() int64 {
 			if b == '\\' {
 				iter.head = i
 				for _, b := range iter.readStringSlowPath() {
-					if 'A' <= b && b <= 'Z' && !iter.cfg.caseSensitive {
-						b += 'a' - 'A'
-					}
 					hash ^= int64(b)
 					hash *= 0x1000193
 				}
@@ -81,9 +78,6 @@ func (iter *Iterator) readFieldHash() int64 {
 					return 0
 				}
 				return hash
-			}
-			if 'A' <= b && b <= 'Z' && !iter.cfg.caseSensitive {
-				b += 'a' - 'A'
 			}
 			hash ^= int64(b)
 			hash *= 0x1000193

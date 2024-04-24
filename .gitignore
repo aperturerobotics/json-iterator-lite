@@ -2,3 +2,5 @@
 /bug_test.go
 /coverage.txt
 /.idea
+.#*
+debug.test*
