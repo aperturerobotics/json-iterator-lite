@@ -1,8 +1,9 @@
 package jsoniter
 
 import (
-	"fmt"
+	"errors"
 	"io"
+	"strconv"
 )
 
 // ValueType the type for JSON element
@@ -211,8 +212,9 @@ func (iter *Iterator) ReportError(operation string, msg string) {
 		contextEnd = iter.tail
 	}
 	context := string(iter.buf[contextStart:contextEnd])
-	iter.Error = fmt.Errorf("%s: %s, error found in #%v byte of ...|%s|..., bigger context ...|%s|...",
-		operation, msg, iter.head-peekStart, parsing, context)
+	iter.Error = errors.New(operation + ": " + msg +
+		", error found in #" + strconv.Itoa(iter.head-peekStart) +
+		" byte of ...|" + parsing + "|..., bigger context ...|" + context + "|...")
 }
 
 // CurrentBuffer gets current buffer as string for debugging purpose
@@ -221,8 +223,9 @@ func (iter *Iterator) CurrentBuffer() string {
 	if peekStart < 0 {
 		peekStart = 0
 	}
-	return fmt.Sprintf("parsing #%v byte, around ...|%s|..., whole buffer ...|%s|...", iter.head,
-		string(iter.buf[peekStart:iter.head]), string(iter.buf[0:iter.tail]))
+	return "parsing #" + strconv.Itoa(iter.head) +
+		" byte, around ...|" + string(iter.buf[peekStart:iter.head]) +
+		"|..., whole buffer ...|" + string(iter.buf[0:iter.tail]) + "|..."
 }
 
 func (iter *Iterator) readByte() (ret byte) {

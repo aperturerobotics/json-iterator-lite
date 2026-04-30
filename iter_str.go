@@ -1,7 +1,7 @@
 package jsoniter
 
 import (
-	"fmt"
+	"strconv"
 	"unicode/utf16"
 )
 
@@ -19,7 +19,7 @@ func (iter *Iterator) ReadString() (ret string) {
 				break
 			} else if c < ' ' {
 				iter.ReportError("ReadString",
-					fmt.Sprintf(`invalid control character found: %d`, c))
+					"invalid control character found: "+strconv.Itoa(int(c)))
 				return
 			}
 		}

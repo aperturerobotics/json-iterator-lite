@@ -3,8 +3,8 @@
 package jsoniter
 
 import (
-	"fmt"
 	"io"
+	"strconv"
 )
 
 func (iter *Iterator) skipNumber() {
@@ -75,7 +75,7 @@ func (iter *Iterator) trySkipString() bool {
 			return false
 		} else if c < ' ' {
 			iter.ReportError("trySkipString",
-				fmt.Sprintf(`invalid control character found: %d`, c))
+				"invalid control character found: "+strconv.Itoa(int(c)))
 			return true // already failed
 		}
 	}

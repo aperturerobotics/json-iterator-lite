@@ -1,7 +1,6 @@
 package jsoniter
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -40,7 +39,7 @@ func (iter *Iterator) ReadObject() (ret string) {
 	case '}':
 		return "" // end of object
 	default:
-		iter.ReportError("ReadObject", fmt.Sprintf(`expect { or , or } or n, but found %s`, string([]byte{c})))
+		iter.ReportError("ReadObject", `expect { or , or } or n, but found `+string([]byte{c}))
 		return
 	}
 }

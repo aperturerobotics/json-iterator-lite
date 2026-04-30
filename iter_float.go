@@ -1,13 +1,32 @@
 package jsoniter
 
 import (
-	"encoding/json"
 	"io"
 	"math/big"
 	"strconv"
 	"strings"
 	"unsafe"
 )
+
+// Number is a JSON number literal preserved as its source string.
+//
+// It mirrors encoding/json.Number so callers can defer numeric parsing
+// without pulling encoding/json (and its reflect dependency) into the
+// build.
+type Number string
+
+// String returns the literal text of the number.
+func (n Number) String() string { return string(n) }
+
+// Float64 parses the number as a float64.
+func (n Number) Float64() (float64, error) {
+	return strconv.ParseFloat(string(n), 64)
+}
+
+// Int64 parses the number as an int64.
+func (n Number) Int64() (int64, error) {
+	return strconv.ParseInt(string(n), 10, 64)
+}
 
 var floatDigits []int8
 
@@ -336,7 +355,7 @@ func validateFloat(str string) string {
 	return ""
 }
 
-// ReadNumber read json.Number
-func (iter *Iterator) ReadNumber() (ret json.Number) {
-	return json.Number(iter.readNumberAsString())
+// ReadNumber reads a JSON number as its literal text.
+func (iter *Iterator) ReadNumber() (ret Number) {
+	return Number(iter.readNumberAsString())
 }

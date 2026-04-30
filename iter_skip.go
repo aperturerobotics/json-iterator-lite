@@ -1,6 +1,6 @@
 package jsoniter
 
-import "fmt"
+import "strconv"
 
 // ReadNil reads a json object as nil and
 // returns whether it's a nil or not
@@ -90,41 +90,41 @@ func (iter *Iterator) Skip() {
 	case '{':
 		iter.skipObject()
 	default:
-		iter.ReportError("Skip", fmt.Sprintf("do not know how to skip: %v", c))
+		iter.ReportError("Skip", "do not know how to skip: "+strconv.Itoa(int(c)))
 		return
 	}
 }
 
 func (iter *Iterator) skipFourBytes(b1, b2, b3, b4 byte) {
 	if iter.readByte() != b1 {
-		iter.ReportError("skipFourBytes", fmt.Sprintf("expect %s", string([]byte{b1, b2, b3, b4})))
+		iter.ReportError("skipFourBytes", "expect "+string([]byte{b1, b2, b3, b4}))
 		return
 	}
 	if iter.readByte() != b2 {
-		iter.ReportError("skipFourBytes", fmt.Sprintf("expect %s", string([]byte{b1, b2, b3, b4})))
+		iter.ReportError("skipFourBytes", "expect "+string([]byte{b1, b2, b3, b4}))
 		return
 	}
 	if iter.readByte() != b3 {
-		iter.ReportError("skipFourBytes", fmt.Sprintf("expect %s", string([]byte{b1, b2, b3, b4})))
+		iter.ReportError("skipFourBytes", "expect "+string([]byte{b1, b2, b3, b4}))
 		return
 	}
 	if iter.readByte() != b4 {
-		iter.ReportError("skipFourBytes", fmt.Sprintf("expect %s", string([]byte{b1, b2, b3, b4})))
+		iter.ReportError("skipFourBytes", "expect "+string([]byte{b1, b2, b3, b4}))
 		return
 	}
 }
 
 func (iter *Iterator) skipThreeBytes(b1, b2, b3 byte) {
 	if iter.readByte() != b1 {
-		iter.ReportError("skipThreeBytes", fmt.Sprintf("expect %s", string([]byte{b1, b2, b3})))
+		iter.ReportError("skipThreeBytes", "expect "+string([]byte{b1, b2, b3}))
 		return
 	}
 	if iter.readByte() != b2 {
-		iter.ReportError("skipThreeBytes", fmt.Sprintf("expect %s", string([]byte{b1, b2, b3})))
+		iter.ReportError("skipThreeBytes", "expect "+string([]byte{b1, b2, b3}))
 		return
 	}
 	if iter.readByte() != b3 {
-		iter.ReportError("skipThreeBytes", fmt.Sprintf("expect %s", string([]byte{b1, b2, b3})))
+		iter.ReportError("skipThreeBytes", "expect "+string([]byte{b1, b2, b3}))
 		return
 	}
 }
