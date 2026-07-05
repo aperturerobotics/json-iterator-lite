@@ -1,11 +1,9 @@
 # json-iterator-lite
 
-[![GoDoc Widget]][GoDoc] [![Go Report Card Widget]][Go Report Card]
+[![GoDoc Widget]][GoDoc]
 
 [GoDoc]: https://godoc.org/github.com/aperturerobotics/json-iterator-lite
 [GoDoc Widget]: https://godoc.org/github.com/aperturerobotics/json-iterator-lite?status.svg
-[Go Report Card Widget]: https://goreportcard.com/badge/github.com/aperturerobotics/json-iterator-lite
-[Go Report Card]: https://goreportcard.com/report/github.com/aperturerobotics/json-iterator-lite
 
 **json-iterator** is an alternative to **encoding/json** which does not use reflection.
 
